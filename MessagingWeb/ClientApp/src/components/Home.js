@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export class Home extends Component {
-  static displayName = Home.name;
-
-  render () {
+export function Home() {
     return (
       <div>
-        <h1>Hello, world!</h1>
+        <h1>Send WhatsApp Message</h1>
       </div>
     );
-  }
 }

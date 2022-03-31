@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { UserContext } from '../UserContext';
 
-export class FetchData extends Component {
-    static displayName = FetchData.name;
+export class History extends Component {
+    static displayName = History.name;
+    static contextType = UserContext;
 
     constructor(props) {
         super(props);
@@ -9,7 +11,10 @@ export class FetchData extends Component {
     }
 
     componentDidMount() {
-        this.getHistoryData();
+        let { user } = this.context;
+        if (user !== null) {
+            this.getHistoryData();
+        }
     }
 
     static renderHistoryTable(messages) {
@@ -36,25 +41,33 @@ export class FetchData extends Component {
     }
 
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
-            : FetchData.renderHistoryTable(this.state.messages);
+        let { user } = this.context;
+        let contents = user !== null
+            ? this.state.loading
+                ? <p><em>Loading...</em></p>
+                : History.renderHistoryTable(this.state.messages)
+            : <p><em>You are loged out</em></p>;
 
         return (
             <div>
-                <h1 id="tabelLabel" >WhatsApp message history</h1>
+                <h1 id="tabelLabel">WhatsApp message history</h1>
                 {contents}
             </div>
         );
     }
 
     async getHistoryData() {
+        let { user } = this.context;
         const response = await fetch('messagehistory',
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwibmJmIjoxNjQ4NjQ5NjYyLCJleHAiOjE2NDg2OTI4NjIsImlhdCI6MTY0ODY0OTY2Mn0.raQVexQG_PQiALaw328EZWJdvv0mJ8mCEj0bYtQNykQ'
+                    'Authorization': 'Bearer ' + user.token
                 }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert('An error occurred, please try again later.');
             });
 
         const data = await response.json();
