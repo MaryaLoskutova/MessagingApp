@@ -86,7 +86,7 @@ export function LogIn() {
                                 />
                             </div>
                         </FormGroup>
-                        <Button className="btn btn-lg" type="submit">Log in</Button>
+                        <Button className="btn btn-sm" type="submit">Log in</Button>
                     </Form>
                 </div>
             }

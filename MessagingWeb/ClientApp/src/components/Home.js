@@ -76,7 +76,7 @@ export function Home() {
                         />
                     </div>
                 </FormGroup>
-                <Button className="btn btn-lg" type="submit">Send</Button>
+                <Button className="btn btn-md" type="submit">Send</Button>
             </Form>
             <p>{result}</p>
             <br />

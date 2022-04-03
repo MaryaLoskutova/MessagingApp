@@ -1,3 +1,21 @@
 ﻿.history-table {
-    padding-top: 60px;
+    padding-top: 20px;
+}
+
+.history-body {
+    padding-top: 20px;
+}
+
+
+.pagination-wrapper {
+    overflow-x: auto;
+}
+
+.pagination {
+    justify-content: center;
+    margin: 30px;
+}
+
+.data-slice {
+    margin-top: 15px;
 }

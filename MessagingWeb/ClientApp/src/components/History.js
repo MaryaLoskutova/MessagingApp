@@ -1,10 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../UserContext';
 import { useHistory } from "react-router";
-import { ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Button, FormGroup } from 'reactstrap';
+import {
+    ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle, Form, Button, FormGroup,
+    Pagination, PaginationItem, PaginationLink
+} from 'reactstrap';
 import Moment from 'moment';
 import Cookies from 'js-cookie'
 import axios from 'axios'
+import "./History.css";
+
 
 export function History() {
     const [messages, setMessages] = useState(null);
@@ -19,6 +24,11 @@ export function History() {
     ]);
     const [dropDownValue, setDropDownValue] = useState(historyName ? historyName : 'Last month');
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const [pageSize, setPageSize] = useState(20);
+    const [pagesCount, setPagesCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+
     const history = useHistory();
     const { user, setUser } = useContext(UserContext);
 
@@ -32,6 +42,11 @@ export function History() {
         setBeginDate(dates[id].date);
         Cookies.set('historydate', dates[id].date);
         Cookies.set('historyname', dates[id].name);
+    }
+
+    function handlePaginationClick(e, index) {
+        e.preventDefault();
+        setCurrentPage(index);
     }
 
     function getHistoryData(beginDate, user, setMessages, setLoading) {
@@ -48,6 +63,7 @@ export function History() {
             .then(
                 (result) => {
                     setMessages(result.data);
+                    setPagesCount(Math.ceil(result.data.length / pageSize));
                     setLoading(false);
                 })
             .catch(function (error) {
@@ -81,46 +97,78 @@ export function History() {
         getHistoryData(beginDate, user, setMessages, setLoading);
     }
 
-    function renderHistoryTable(messages) {
+    function renderHistoryTableWithPagination(messages) {
         return (
             <div className='history-table'>
                 {messages && messages.length > 0 &&
-                    <table className='table table-striped' aria-labelledby="tabelLabel">
-                        <thead>
-                            <tr>
-                                <th>SendDate</th>
-                                <th>Phone</th>
-                                <th>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {messages.map(message =>
-                                <tr key='{message.messageId}'>
-                                    <td>{Moment(message.sendDate).format('DD/MM/yyyy HH:mm:ss')}</td>
-                                    <td>{message.phone}</td>
-                                    <td>{message.message}</td>
+                    <React.Fragment>
+                        <table className='table table-striped' aria-labelledby="tabelLabel">
+                            <thead>
+                                <tr>
+                                    <th>SendDate</th>
+                                    <th>Phone</th>
+                                    <th>Message</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {messages
+                                    .slice(
+                                        currentPage * pageSize,
+                                        (currentPage + 1) * pageSize
+                                    )
+                                    .map(message =>
+                                        <tr key='{message.messageId}'>
+                                            <td>{Moment(message.sendDate).format('DD/MM/yyyy HH:mm:ss')}</td>
+                                            <td>{message.phone}</td>
+                                            <td>{message.message}</td>
+                                        </tr>
+                                    )}
+                            </tbody>
+                        </table>
+                        <div className="pagination-wrapper">
+                            <Pagination aria-label="Page navigation example">
+                                <PaginationItem disabled={currentPage <= 0}>
+                                    <PaginationLink
+                                        onClick={e => handlePaginationClick(e, currentPage - 1)}
+                                        previous
+                                        href="#"
+                                    />
+
+                                </PaginationItem>
+
+                                {[...Array(pagesCount)].map((page, i) =>
+                                    <PaginationItem active={i === currentPage} key={i}>
+                                        <PaginationLink onClick={e => handlePaginationClick(e, i)} href="#">
+                                            {i + 1}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                )}
+
+                                <PaginationItem disabled={currentPage >= pagesCount - 1}>
+
+                                    <PaginationLink
+                                        onClick={e => handlePaginationClick(e, currentPage + 1)}
+                                        next
+                                        href="#"
+                                    />
+
+                                </PaginationItem>
+
+                            </Pagination>
+
+                        </div>
+                    </React.Fragment>
                 }
                 { (!messages || messages.length == 0) && <p>The history is empty</p>}
             </div>
         );
     }
 
-    let contents = user !== null
-        ? loading
-            ? <p><em>Loading...</em></p>
-            : renderHistoryTable(messages)
-        : <p><em>You are loged out</em></p>;
-
-    return (
-        <div>
-            <h1 id="tabelLabel">History</h1>
+    function renderChoosePeriodButtons() {
+        return (
             <Form onSubmit={handleUpdate}>
                 <FormGroup className="row">
-                    <div className="col-sm-10">
+                    <div className="col-sm-3">
                         <ButtonDropdown isOpen={dropdownOpen} toggle={(event) => toggle(event.target.value)}>
                             <DropdownToggle caret>
                                 {dropDownValue}
@@ -134,10 +182,25 @@ export function History() {
                         </ButtonDropdown>
 
                     </div>
-                    <Button className="btn btn-lg" type="submit">Update</Button>
+                    <Button className="btn btn-sm" type="submit">Update</Button>
                 </FormGroup>
             </Form>
-            {contents}
+        );
+    }
+
+    let contents = user !== null
+        ? loading
+            ? <p><em>Loading...</em></p>
+            : renderHistoryTableWithPagination(messages)
+        : <p><em>You are loged out</em></p>;
+
+    return (
+        <div>
+            <h1 id="tabelLabel">History</h1>
+            <div className="history-body">
+                {renderChoosePeriodButtons()}
+                {contents}
+            </div>
         </div>
     );
 }
