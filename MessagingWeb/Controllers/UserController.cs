@@ -30,7 +30,7 @@ namespace MessagingWeb.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] UserModel model)
+        public IActionResult Authenticate([FromBody] AuthentificationModel model)
         {
             var user = _userService.Authenticate(model.Login, model.Password);
 

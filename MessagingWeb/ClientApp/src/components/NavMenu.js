@@ -30,10 +30,7 @@ export function NavMenu() {
                                 <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink tag={Link} className="text-dark" to="/history">History</NavLink>
-                            </NavItem>
-                            <NavItem>
-                                {!user && <NavLink tag={Link} className="text-dark" to="/log-in">Log In</NavLink>}
+                                {!user && <NavLink tag={Link} className="text-dark" to="/login">Log In</NavLink>}
                                 {user && <NavLink className="text-dark" href="#" onClick={logout}>Log Out</NavLink>}
                             </NavItem>
                         </ul>

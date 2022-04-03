@@ -1,15 +1,11 @@
 ﻿using System;
-
-namespace MessagingWeb
+namespace MessagingWeb.BusinessObjects
 {
-    public class MessageHistoryModel
+    public class MessageDto
     {
         public Guid MessageId { get; set; }
-
         public DateTime SendDate { get; set; }
-
         public string Phone { get; set; }
-
         public string Message { get; set; }
     }
 }

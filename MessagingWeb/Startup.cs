@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
 using MessagingWeb.Services;
+using MessagingWeb.Repositories;
+using Microsoft.EntityFrameworkCore;
+using MessagingWeb.Factories;
+using MessagingWeb.Converters;
 
 namespace MessagingWeb
 {
@@ -26,6 +30,7 @@ namespace MessagingWeb
         {
 
             services.AddControllersWithViews();
+            services.AddDbContext<MessageDbContext>(options => options.UseSqlite(@"Data Source=messages.db"));
 
             services.AddSpaStaticFiles(configuration =>
             {
@@ -70,6 +75,10 @@ namespace MessagingWeb
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IMessageHistoryRepository, MessageHistoryRepository>();
+            services.AddScoped<IMessageFactory, MessageFactory>();
+            services.AddScoped<IMessageConverter, MessageConverter>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
