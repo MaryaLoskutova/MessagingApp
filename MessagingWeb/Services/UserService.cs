@@ -1,16 +1,17 @@
 ﻿using MessagingWeb.BusinessObjects;
 using MessagingWeb.Helpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace MessagingWeb.Services
 {
     public class UserService : IUserService
     {
-        private readonly IConfiguration _configuration;
+        private readonly AppSettings _appSettings;
 
-        public UserService(IConfiguration configuration)
+        public UserService(IOptions<AppSettings> appSettings)
         {
-            _configuration = configuration;
+            _appSettings = appSettings.Value;
         }
 
         UserDto IUserService.Authenticate(string login, string password)
@@ -18,13 +19,9 @@ namespace MessagingWeb.Services
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
                 return null;
 
-
-            var appSettingsSection = _configuration.GetSection("AppSettings");
-            var appSettings = appSettingsSection.Get<AppSettings>();
-
-            return appSettings.User.Login == login
-                && appSettings.User.Password == password
-                ? appSettings.User
+            return _appSettings.User.Login == login
+                && _appSettings.User.Password == password
+                ? _appSettings.User
                 : null;
         }
     }

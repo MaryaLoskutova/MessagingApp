@@ -36,6 +36,9 @@
     <None Remove="Converters\" />
     <None Remove="Factories\" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
+    <None Remove="Whatsapp.NET" />
+    <None Remove="MessageBird" />
+    <None Remove="BusinessObjects\WhatsApp\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +49,7 @@
     <Folder Include="Repositories\" />
     <Folder Include="Converters\" />
     <Folder Include="Factories\" />
+    <Folder Include="BusinessObjects\WhatsApp\" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

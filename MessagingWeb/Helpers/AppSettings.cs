@@ -6,5 +6,7 @@ namespace MessagingWeb.Helpers
     {
         public string Secret { get; set; }
         public UserDto User { get; set; }
+        public WhatsAppSettings WhatsAppSettings { get; set; }
+        public bool UseProxy { get; set; }
     }
 }

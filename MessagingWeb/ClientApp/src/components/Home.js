@@ -11,6 +11,7 @@ export function Home() {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState('');
+    const [error, setError] = useState('');
     const { user, setUser } = useContext(UserContext);
 
     function handleSubmit(event) {
@@ -31,21 +32,34 @@ export function Home() {
                         message: message
                     })
             })
-            .then(res => res.json())
             .then(
                 (res) => {
-                    setMessage('');
-                    setPhone('');
-                    setResult('The message is sent');
+                    if (!res.ok) {
+                        setError(res.statusText);
+                    } else {
+                        setResult('The message is sent');
+                    }
                     setLoading(false);
                 })
-            .catch((err) => {
-                console.error(err);
-                alert('An error occurred, please try again later.');
+            .catch(function (err) {
                 setLoading(false);
             })
+
+        setMessage('');
+        setPhone('');
     }
 
+    function handlePhoneChange(e) {
+        setPhone(e.target.value);
+        setError('');
+        setResult('');
+    }
+
+    function handleMessageChange(e) {
+        setMessage(e.target.value);
+        setError('');
+        setResult('');
+    }
 
     return (
         <div className="sendMessage">
@@ -53,12 +67,13 @@ export function Home() {
                 <FormGroup className="row">
                     <Label className="col-sm-2 col-form-label" for="phoneinput">Phone</Label>
                     <div className="col-sm-10">
-                        <Input 
+                        <Input
                             id="phoneinput"
                             value={phone}
                             type="text"
                             placeholder="phone"
-                            onChange={(event) => setPhone(event.target.value)}
+                            required
+                            onChange={e => handlePhoneChange(e)}
                         />
                     </div>
                 </FormGroup>
@@ -72,13 +87,15 @@ export function Home() {
                             value={message}
                             maxLength={250}
                             placeholder="message"
-                            onChange={(event) => setMessage(event.target.value)}
+                            required
+                            onChange={e => handleMessageChange(e)}
                         />
                     </div>
                 </FormGroup>
+                {error && <div class="alert alert-danger" role="alert">{error}</div>}
+                {result && <div class="alert alert-primary" role="alert">{result}</div>}
                 <Button className="btn btn-md" type="submit">Send</Button>
             </Form>
-            <p>{result}</p>
             <br />
             <History />
         </div>
@@ -86,5 +103,5 @@ export function Home() {
 }
 
 
-           
+
 

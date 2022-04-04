@@ -79,6 +79,15 @@ namespace MessagingWeb
             services.AddScoped<IMessageHistoryRepository, MessageHistoryRepository>();
             services.AddScoped<IMessageFactory, MessageFactory>();
             services.AddScoped<IMessageConverter, MessageConverter>();
+            services.AddScoped<IWhatsAppMessageFactory, WhatsAppMessageFactory>();
+            if (appSettings.UseProxy)
+            {
+                services.AddScoped<IMessageSender, ProxyMessageSender>();
+            }
+            else
+            {
+                services.AddScoped<IMessageSender, MessageSender>();
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
